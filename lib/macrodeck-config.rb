@@ -26,93 +26,96 @@ module MacroDeck
 			end
 
 			@environment = Sinatra::Application.environment.to_sym
+			@env_config = @config[@environment.to_s]
 
-			if @config[@environment.to_s]
-				if @config[@environment.to_s]["admin_username"]
-					@admin_username = @config[@environment.to_s]["admin_username"]
+			if @env_config
+				if @env_config["admin_username"]
+					@admin_username = @env_config["admin_username"]
 				else
 					@admin_username = "admin"
 				end
 
-				if @config[@environment.to_s]["admin_password"]
-					@admin_password = @config[@environment.to_s]["admin_password"]
+				if @env_config["admin_password"]
+					@admin_password = @env_config["admin_password"]
 				else
 					@admin_password = "admin"
 				end
 
-				if @config[@environment.to_s]["db_url"]
-					@db_url = @config[@environment.to_s]["db_url"]
+				if @env_config["db_url"]
+					@db_url = @env_config["db_url"]
 				else
 					@db_url = "macrodeck-#{@environment.to_s}"
 				end
 
-				if @config[@environment.to_s]["layout"]
-					@layout = @config[@environment.to_s]["layout"]
+				if @env_config["layout"]
+					@layout = @env_config["layout"]
 				else
 					@layout = "layout"
 				end
 
-				if @config[@environment.to_s]["view_dir"]
-					@view_dir = @config[@environment.to_s]["view_dir"]
+				if @env_config["view_dir"]
+					@view_dir = @env_config["view_dir"]
 				else
 					@view_dir = "views"
 				end
 
-				if @config[@environment.to_s]["path_prefix"]
-					@path_prefix = @config[@environment.to_s]["path_prefix"]
+				if @env_config["path_prefix"]
+					@path_prefix = @env_config["path_prefix"]
 				else
 					@path_prefix = "/"
 				end
 
-				if @config[@environment.to_s]["turk_path_prefix"]
-					@turk_path_prefix = @config[@environment.to_s]["turk_path_prefix"]
+				if @env_config["turk_path_prefix"]
+					@turk_path_prefix = @env_config["turk_path_prefix"]
 				else
 					@turk_path_prefix = "/turk/"
 				end
 
-				if @config[@environment.to_s]["turk_sandbox"]
-					@turk_sandbox = @config[@environment.to_s]["turk_sandbox"]
+				if @env_config["turk_sandbox"]
+					@turk_sandbox = @env_config["turk_sandbox"]
 				else
 					@turk_sandbox = true
 				end
 
-				if @config[@environment.to_s]["turk_reward"]
-					@turk_reward = @config[@environment.to_s]["turk_reward"]
+				if @env_config["turk_reward"]
+					@turk_reward = @env_config["turk_reward"]
 				else
 					@turk_reward = 0.0
 				end
 
-				if @config[@environment.to_s]["turk_hit_type_id"]
-					@turk_hit_type_id = @config[@environment.to_s]["turk_hit_type_id"]
+				if @env_config["turk_hit_type_id"]
+					@turk_hit_type_id = @env_config["turk_hit_type_id"]
 				else
 					@turk_hit_type_id = nil
 				end
 
-				if @config[@environment.to_s]["aws_access_key"]
-					@aws_access_key = @config[@environment.to_s]["aws_access_key"]
+				if @env_config["aws_access_key"]
+					@aws_access_key = @env_config["aws_access_key"]
 				else
 					@aws_access_key = ""
 				end
 
-				if @config[@environment.to_s]["aws_secret_access_key"]
-					@aws_secret_access_key = @config[@environment.to_s]["aws_secret_access_key"]
+				if @env_config["aws_secret_access_key"]
+					@aws_secret_access_key = @env_config["aws_secret_access_key"]
 				else
 					@aws_secret_access_key = ""
 				end
 
-				if @config[@environment.to_s]["base_url"]
-					@base_url = @config[@environment.to_s]["base_url"].gsub(/\/$/, "")
+				if @env_config["base_url"]
+					@base_url = @env_config["base_url"].gsub(/\/$/, "")
 				else
 					@base_url = "http://localhost:3000"
 				end
 			end
 
 			# Configure RTurk if we have enough data
-			if @aws_access_key != "" && @aws_secret_access_key != ""
-				if @turk_sandbox
-					RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => true)
-				else
-					RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => false)
+			if defined?(RTurk)
+				if @aws_access_key != "" && @aws_secret_access_key != ""
+					if @turk_sandbox
+						RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => true)
+					else
+						RTurk.setup(@aws_access_key, @aws_secret_access_key, :sandbox => false)
+					end
 				end
 			end
 		end
